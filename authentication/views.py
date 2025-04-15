@@ -10,7 +10,7 @@ import json
 
 User = get_user_model()
 
-@login_required
+@login_required(login_url='/auth/login')
 def profile(request):
     user = request.user
 
@@ -35,18 +35,21 @@ def login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-
+        
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
             auth_login(request, user)
             return redirect('profile')
         else:
-            return render(request, 'login.html', {'error': 'Invalid credentials'})
+            return render(request, 'login.html', {
+                'error': 'Invalid username or password',
+                'username': username
+            })
 
     return render(request, 'login.html')
 
-@login_required
+@login_required(login_url='/auth/login')
 def logout(request):
     auth_logout(request)
     return JsonResponse({'message': 'Logout successful'})
@@ -55,25 +58,11 @@ def logout(request):
 @require_http_methods(["POST", "GET"])
 def register(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password1 = request.POST.get('password1')
-        password2 = request.POST.get('password2')
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            return redirect('login')
+    else:
+        form = CustomUserCreationForm()
 
-        if not all([username, email, password1, password2]):
-            return JsonResponse({'error': 'All fields are required'}, status=400)
-
-        if password1 != password2:
-            return JsonResponse({'error': 'Passwords do not match'}, status=400)
-
-        if User.objects.filter(username=username).exists():
-            return JsonResponse({'error': 'Username already exists'}, status=400)
-
-        if User.objects.filter(email=email).exists():
-            return JsonResponse({'error': 'Email already exists'}, status=400)
-
-        user = User.objects.create_user(username=username, email=email, password=password1)
-        return redirect('login')
-
-    form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})
