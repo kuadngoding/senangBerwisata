@@ -1,0 +1,30 @@
+<!-- templates/place_detail.html -->
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ place.name }} - Detail</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  {% include 'navbar.html' %}
+  <div class="container mx-auto px-4 py-8">
+    <a href="{% url 'place_list' %}" class="text-blue-600 hover:underline mb-6 inline-block">← Kembali ke daftar</a>
+
+    <h1 class="text-3xl font-bold mb-2">{{ place.name }}</h1>
+    <p class="text-sm text-gray-600 mb-1">{{ place.address }}</p>
+    <a href="{{ place.google_maps_link }}" target="_blank" class="text-green-600 text-sm hover:underline">Lihat di Google Maps</a>
+
+    <p class="mt-4 text-gray-700">{{ place.description }}</p>
+
+    <h2 class="text-2xl font-semibold mt-8 mb-4">Galeri Foto</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <img src="{{ place.photo_main.url }}" alt="Foto utama" class="rounded-lg shadow">
+      {% if place.photo_1 %}<img src="{{ place.photo_1.url }}" alt="Foto 1" class="rounded-lg shadow">{% endif %}
+      {% if place.photo_2 %}<img src="{{ place.photo_2.url }}" alt="Foto 2" class="rounded-lg shadow">{% endif %}
+      {% if place.photo_3 %}<img src="{{ place.photo_3.url }}" alt="Foto 3" class="rounded-lg shadow">{% endif %}
+    </div>
+  </div>
+</body>
+</html>
