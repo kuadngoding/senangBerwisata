@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'authentication',
     'review',
+    'wisataTematik',
 ]
 
 MIDDLEWARE = [
