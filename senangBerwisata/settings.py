@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'place',
     'corsheaders',
     'authentication',
+    'review',
 ]
 
 MIDDLEWARE = [
