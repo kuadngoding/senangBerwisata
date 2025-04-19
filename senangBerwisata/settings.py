@@ -37,8 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'place',
     'corsheaders',
     'authentication',
+    'review',
 ]
 
 MIDDLEWARE = [
@@ -124,4 +126,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 AUTH_USER_MODEL = 'authentication.CustomUser'
+
+LOGIN_REDIRECT_URL = '/place/'
+LOGOUT_REDIRECT_URL = '/auth/login/'
