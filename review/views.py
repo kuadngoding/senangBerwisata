@@ -64,12 +64,3 @@ def edit_review(request, review_id):
     review.comment = data.get('comment', review.comment)
     review.save()
     return JsonResponse({'message': 'Review updated successfully'})
-
-
-@csrf_exempt
-@require_http_methods(["DELETE"])
-@login_required(login_url='/auth/login')
-def delete_review(request, review_id):
-    review = get_object_or_404(Review, pk=review_id, user=request.user)
-    review.delete()
-    return JsonResponse({'message': 'Review deleted successfully'})

@@ -107,8 +107,6 @@
                     <button onclick="editReview(${review.id}, ${review.rating}, 
                       \`${review.comment.replace(/`/g, '\\`')}\`)"
                             class="text-blue-600 text-sm mr-2">Edit</button>
-                    <button onclick="deleteReview(${review.id})"
-                            class="text-red-600 text-sm">Hapus</button>
                   ` : ""}
                 </div>
               `;
@@ -173,15 +171,6 @@
       .catch(console.error);
     }
 
-    function deleteReview(id) {
-      if (!confirm("Yakin ingin menghapus ulasan ini?")) return;
-      fetch(`/reviews/delete/${id}/`, {
-        method: "DELETE",
-        headers: { "X-CSRFToken": "{{ csrf_token }}" }
-      })
-      .then(() => fetchReviews())
-      .catch(console.error);
-    }
   </script>
 </body>
 </html>
