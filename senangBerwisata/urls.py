@@ -24,5 +24,6 @@ urlpatterns = [
     path('auth/', include('authentication.urls')),
     path('', include('place.urls')),
     path('reviews/', include('review.urls')),
+    path('wisata-tematik/', include('wisataTematik.urls')),
     path('coupon/', include('coupon.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

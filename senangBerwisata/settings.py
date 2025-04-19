@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'authentication',
     'review.apps.ReviewConfig',
     'coupon.apps.CouponConfig',
+    'wisataTematik',
 ]
 
 MIDDLEWARE = [

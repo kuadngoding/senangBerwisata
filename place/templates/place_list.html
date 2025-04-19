@@ -28,6 +28,37 @@
     {% if not places %}
       <p class="text-center mt-10 text-gray-500">Belum ada tempat wisata ditambahkan.</p>
     {% endif %}
+
+    <div class="mt-16">
+      <h2 class="text-2xl font-bold mb-6 text-center">Rute Wisata Tematik</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for rute in tematik_list %}
+          <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <img class="h-48 w-full object-cover" src="{{ rute.gambar.url }}" alt="{{ rute.judul }}">
+            <div class="p-4">
+              <h3 class="text-xl font-semibold">
+                <a href="{% url 'detail_rute' rute.pk %}" class="text-purple-600 hover:underline">{{ rute.judul }}</a>
+              </h3>
+              <p class="text-sm text-gray-600">{{ rute.deskripsi|truncatewords:20 }}</p>
+              <p class="text-xs text-gray-400 mt-2">Ditambahkan oleh {{ rute.dibuat_oleh.username }} | {{ rute.tanggal_dibuat|date:"d M Y" }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if not tematik_list %}
+        <p class="text-center mt-10 text-gray-500">Belum ada rute tematik ditambahkan.</p>
+      {% endif %}
+
+      {% if user.is_authenticated %}
+        <div class="mt-8 text-center">
+          <a href="{% url 'tambah_rute' %}" class="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg">
+            + Tambah Rute Wisata Tematik
+          </a>
+        </div>
+      {% endif %}
+    </div>
   </div>
 </body>
 </html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ rute.judul }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  {% include 'navbar.html' %}
+
+  <div class="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
+    <h1 class="text-3xl font-bold mb-4">{{ rute.judul }}</h1>
+
+    <img src="{{ rute.gambar.url }}" alt="{{ rute.judul }}" class="w-full h-64 object-cover rounded-lg mb-6">
+
+    <p class="text-gray-600 mb-4 whitespace-pre-line">{{ rute.deskripsi }}</p>
+
+    <p class="text-sm text-gray-500">
+      Ditambahkan oleh <span class="font-semibold">{{ rute.dibuat_oleh.username }}</span> pada {{ rute.tanggal_dibuat|date:"d M Y" }}
+    </p>
+
+    {% if user.is_authenticated and user == rute.dibuat_oleh %}
+      <div class="mt-6">
+        <a href="{% url 'edit_rute' rute.id %}" class="text-blue-500 hover:underline">Edit Rute</a>
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>
