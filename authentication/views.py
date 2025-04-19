@@ -52,7 +52,7 @@ def login(request):
 @login_required(login_url='/auth/login')
 def logout(request):
     auth_logout(request)
-    return JsonResponse({'message': 'Logout successful'})
+    return redirect('place_list')
 
 @csrf_exempt
 @require_http_methods(["POST", "GET"])
