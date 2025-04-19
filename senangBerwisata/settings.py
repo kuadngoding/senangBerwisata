@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'place',
     'corsheaders',
     'authentication',
-    'review',
+    'review.apps.ReviewConfig',
+    'coupon.apps.CouponConfig',
     'wisataTematik',
 ]
 

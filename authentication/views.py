@@ -7,25 +7,32 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from authentication.forms import CustomUserCreationForm
 import json
+from coupon.models import Coupon
 
 User = get_user_model()
 
 @login_required(login_url='/auth/login')
 def profile(request):
     user = request.user
+    redeemed_coupons = Coupon.objects.filter(
+        user=user, 
+        is_redeemed=True
+    ).order_by('-created_at')
+    print(redeemed_coupons)
 
     if request.headers.get('Content-Type') == 'application/json':
         return JsonResponse({
             'username': user.username,
             'email': user.email,
             'points': user.points,
-            'registered_at': user.registered_at
+            'registered_at': user.registered_at,
         })
 
     context = {
         'username': user.username,
         'email': user.email,
         'points': user.points,
+        'coupons': redeemed_coupons,
     }
     return render(request, 'profile.html', context)
 

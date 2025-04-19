@@ -3,35 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
+    <title>Profil Pengguna</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .font-mono { font-family: 'Courier New', monospace }
+        .font-semibold { font-weight: 600 }
+    </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-100">
     {% include 'navbar.html' %}
 
     <div class="container mx-auto px-4 py-8">
-        <div class="bg-white p-8 rounded-lg shadow-lg max-w-2xl mx-auto">
-            <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Welcome, {{ username }}!</h2>
-
-            <div class="space-y-4">
-                <p class="text-lg text-gray-700">
-                    <strong class="font-semibold">Email:</strong> {{ email }}
-                </p>
-                <p class="text-lg text-gray-700">
-                    <strong class="font-semibold">Points:</strong> {{ points }}
+        <!-- Info Profil -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4">Selamat datang, {{ username }}!</h2>
+            <div class="space-y-2">
+                <p><strong>Email:</strong> {{ email }}</p>
+                <p><strong>Poin:</strong> 
+                    <span id="profile-points" class="font-semibold">{{ points }}</span>
                 </p>
             </div>
+        </div>
 
-            <div class="mt-6 text-center">
-                <form method="POST" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded font-semibold transition duration-300">
-                        Logout
-                    </button>
-                </form>
+        <!-- Tukar Poin Section -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <h3 class="text-xl font-bold mb-4">Tukar Poin</h3>
+            
+            <button 
+                id="redeemBtn"
+                class="px-4 py-2 rounded transition-all {% if user.points >= 2000 %}bg-green-500 hover:bg-green-600{% else %}bg-gray-300 cursor-not-allowed{% endif %} text-white"
+                {% if user.points < 2000 %}disabled{% endif %}
+                onclick="redeemCoupon()"
+            >
+                Tukar 2000 Poin untuk Kupon
+            </button>
+        </div>
+
+        <!-- Bagian Riwayat Kupon - Perbaikan -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-xl font-bold mb-4">Riwayat Kupon</h3>
+            
+            <div id="coupons-container">
+                {% if coupons %}  <!-- Ganti redeemed_coupons menjadi coupons -->
+                    <div class="space-y-2">
+                        {% for coupon in coupons %}  <!-- Ganti redeemed_coupons menjadi coupons -->
+                        <div class="p-3 bg-gray-50 rounded-md border">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <!-- Tambahkan () untuk method get_brand_display -->
+                                    <span class="font-semibold">{{ coupon.get_brand_display }}</span>
+                                    <code class="font-mono text-blue-600 ml-2">{{ coupon.code }}</code>
+                                </div>
+                                <!-- Format tanggal konsisten dengan data AJAX -->
+                                <span class="text-sm text-gray-500">{{ coupon.created_at|date:"d M Y" }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div id="empty-state" class="text-center py-4 text-gray-500">
+                        Belum ada riwayat kupon
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
-    
+
+    <!-- Modal -->
+    <div id="couponModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-8 rounded-lg max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold mb-4 text-center" id="modalTitle"></h3>
+            <div class="bg-yellow-50 p-4 rounded-lg mb-6">
+                <p class="text-3xl font-mono font-bold text-center" id="modalCode"></p>
+            </div>
+            <p class="text-center text-gray-600 mb-4">Kode ini berlaku hingga 30 hari setelah penukaran</p>
+            <button 
+                onclick="document.getElementById('couponModal').classList.add('hidden')"
+                class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors"
+            >
+                Tutup
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function redeemCoupon() {
+            fetch('/coupon/redeem/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if(data.success) {
+                    document.getElementById('profile-points').textContent = data.new_points;
+                    
+                    const redeemBtn = document.getElementById('redeemBtn');
+                    redeemBtn.disabled = data.new_points < 2000;
+                    redeemBtn.classList.toggle('bg-green-500', data.new_points >= 2000);
+                    redeemBtn.classList.toggle('hover:bg-green-600', data.new_points >= 2000);
+                    redeemBtn.classList.toggle('bg-gray-300', data.new_points < 2000);
+                    
+                    document.getElementById('modalTitle').textContent = data.brand;
+                    document.getElementById('modalCode').textContent = data.code;
+                    document.getElementById('couponModal').classList.remove('hidden');
+
+                    const couponsContainer = document.getElementById('coupons-container');
+                    const emptyState = document.getElementById('empty-state');
+
+                    const newCouponHTML = `
+                        <div class="p-3 bg-gray-50 rounded-md border">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <span class="font-semibold">${data.brand}</span>
+                                    <code class="font-mono text-blue-600 ml-2">${data.code}</code>
+                                </div>
+                                <span class="text-sm text-gray-500">${new Date(data.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                            </div>
+                        </div>
+                    `;
+
+                    if (emptyState) {
+                        emptyState.remove();
+                        couponsContainer.innerHTML = `
+                            <div class="space-y-2">
+                                ${newCouponHTML}
+                            </div>
+                        `;
+                    } else {
+                        couponsContainer.querySelector('.space-y-2').insertAdjacentHTML('afterbegin', newCouponHTML);
+                    }                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(error.error || 'Terjadi kesalahan saat menukar kupon');
+            });
+        }
+    </script>
 </body>
 </html>
