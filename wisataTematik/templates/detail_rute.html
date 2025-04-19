@@ -18,6 +18,12 @@
     <p class="text-sm text-gray-500">
       Ditambahkan oleh <span class="font-semibold">{{ rute.dibuat_oleh.username }}</span> pada {{ rute.tanggal_dibuat|date:"d M Y" }}
     </p>
+
+    {% if user.is_authenticated and user == rute.dibuat_oleh %}
+      <div class="mt-6">
+        <a href="{% url 'edit_rute' rute.id %}" class="text-blue-500 hover:underline">Edit Rute</a>
+      </div>
+    {% endif %}
   </div>
 </body>
 </html>
