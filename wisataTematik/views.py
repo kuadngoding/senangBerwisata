@@ -25,3 +25,14 @@ def tambah_rute_wisata(request):
 def detail_rute_wisata(request, pk):
     rute = get_object_or_404(WisataTematik, pk=pk)
     return render(request, 'detail_rute.html', {'rute': rute})
+
+def edit_rute_wisata(request, pk):
+    rute = get_object_or_404(WisataTematik, pk=pk)
+    if request.method == 'POST':
+        form = WisataTematikForm(request.POST, request.FILES, instance=rute)
+        if form.is_valid():
+            form.save()
+            return redirect('place_list')
+    else:
+        form = WisataTematikForm(instance=rute)
+    return render(request, 'edit_rute.html', {'form': form, 'rute': rute})
