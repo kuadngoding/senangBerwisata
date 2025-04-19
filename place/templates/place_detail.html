@@ -1,53 +1,79 @@
 <!-- templates/place_detail.html -->
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>{{ place.name }} - Detail</title>
+  <title>{{ place.name }} – Detail</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
   {% include 'navbar.html' %}
+
+  {% if user.is_authenticated %}
+    <div class="container mx-auto px-4 mt-4">
+      <p class="text-right text-sm font-medium">
+        Poin Anda: <span id="page-points">{{ user.points }}</span>
+      </p>
+    </div>
+  {% endif %}
+
   <div class="container mx-auto px-4 py-8">
-    <a href="{% url 'place_list' %}" class="text-blue-600 hover:underline mb-6 inline-block">← Kembali ke daftar</a>
+    <a href="{% url 'place_list' %}" class="text-blue-600 hover:underline mb-6 inline-block">
+      ← Kembali ke daftar
+    </a>
 
     <h1 class="text-3xl font-bold mb-2">{{ place.name }}</h1>
     <p class="text-sm text-gray-600 mb-1">{{ place.address }}</p>
-    <a href="{{ place.google_maps_link }}" target="_blank" class="text-green-600 text-sm hover:underline">Lihat di Google Maps</a>
+    <a href="{{ place.google_maps_link }}" target="_blank"
+       class="text-green-600 text-sm hover:underline">Lihat di Google Maps</a>
     <p class="mt-4 text-gray-700">{{ place.description }}</p>
 
     <h2 class="text-2xl font-semibold mt-8 mb-4">Galeri Foto</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       <img src="{{ place.photo_main.url }}" alt="Foto utama" class="rounded-lg shadow">
-      {% if place.photo_1 %}<img src="{{ place.photo_1.url }}" alt="Foto 1" class="rounded-lg shadow">{% endif %}
-      {% if place.photo_2 %}<img src="{{ place.photo_2.url }}" alt="Foto 2" class="rounded-lg shadow">{% endif %}
-      {% if place.photo_3 %}<img src="{{ place.photo_3.url }}" alt="Foto 3" class="rounded-lg shadow">{% endif %}
+      {% if place.photo_1 %}
+        <img src="{{ place.photo_1.url }}" alt="Foto 1" class="rounded-lg shadow">
+      {% endif %}
+      {% if place.photo_2 %}
+        <img src="{{ place.photo_2.url }}" alt="Foto 2" class="rounded-lg shadow">
+      {% endif %}
+      {% if place.photo_3 %}
+        <img src="{{ place.photo_3.url }}" alt="Foto 3" class="rounded-lg shadow">
+      {% endif %}
     </div>
 
     <h2 class="text-2xl font-semibold mt-10 mb-4">Ulasan Pengunjung</h2>
     <div id="reviews" class="space-y-4 mb-6">Memuat ulasan...</div>
 
     {% if user.is_authenticated %}
-    <form id="review-form" class="bg-white p-4 rounded shadow-md space-y-4">
-      <div>
-        <label for="rating" class="block font-medium">Rating (1–5):</label>
-        <select id="rating" class="mt-1 w-full border rounded px-2 py-1">
-          <option value="1">⭐</option>
-          <option value="2">⭐⭐</option>
-          <option value="3">⭐⭐⭐</option>
-          <option value="4">⭐⭐⭐⭐</option>
-          <option value="5">⭐⭐⭐⭐⭐</option>
-        </select>
-      </div>
-      <div>
-        <label for="comment" class="block font-medium">Komentar:</label>
-        <textarea id="comment" rows="3" class="mt-1 w-full border rounded px-2 py-1" placeholder="Tulis ulasanmu..."></textarea>
-      </div>
-      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Kirim Ulasan</button>
-    </form>
+      <form id="review-form" class="bg-white p-4 rounded shadow-md space-y-4">
+        {% csrf_token %}
+        <div>
+          <label for="rating" class="block font-medium">Rating (1–5):</label>
+          <select id="rating" class="mt-1 w-full border rounded px-2 py-1">
+            <option value="1">⭐</option>
+            <option value="2">⭐⭐</option>
+            <option value="3">⭐⭐⭐</option>
+            <option value="4">⭐⭐⭐⭐</option>
+            <option value="5">⭐⭐⭐⭐⭐</option>
+          </select>
+        </div>
+        <div>
+          <label for="comment" class="block font-medium">Komentar:</label>
+          <textarea id="comment" rows="3"
+                    class="mt-1 w-full border rounded px-2 py-1"
+                    placeholder="Tulis ulasanmu..."></textarea>
+        </div>
+        <button type="submit"
+                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          Kirim Ulasan
+        </button>
+      </form>
     {% else %}
-      <p class="text-gray-600">Silakan <a href="{% url 'login' %}" class="text-blue-600 underline">login</a> untuk memberi ulasan.</p>
+      <p class="text-gray-600">
+        Silakan <a href="{% url 'login' %}" class="text-blue-600 underline">login</a>
+        untuk memberi ulasan.
+      </p>
     {% endif %}
   </div>
 
@@ -74,10 +100,15 @@
                   <p class="font-semibold">${review.user}</p>
                   <p class="text-yellow-500">${stars}</p>
                   <p>${review.comment}</p>
-                  <p class="text-sm text-gray-500">${new Date(review.created_at).toLocaleDateString()}</p>
+                  <p class="text-sm text-gray-500">
+                    ${new Date(review.created_at).toLocaleDateString()}
+                  </p>
                   ${isOwner ? `
-                    <button onclick="editReview(${review.id}, ${review.rating}, '${review.comment}')" class="text-blue-600 text-sm mr-2">Edit</button>
-                    <button onclick="deleteReview(${review.id})" class="text-red-600 text-sm">Hapus</button>
+                    <button onclick="editReview(${review.id}, ${review.rating}, 
+                      \`${review.comment.replace(/`/g, '\\`')}\`)"
+                            class="text-blue-600 text-sm mr-2">Edit</button>
+                    <button onclick="deleteReview(${review.id})"
+                            class="text-red-600 text-sm">Hapus</button>
                   ` : ""}
                 </div>
               `;
@@ -104,41 +135,52 @@
           body: JSON.stringify({ rating, comment })
         })
         .then(res => res.json())
-        .then(() => {
+        .then(data => {
+          if (data.error) {
+            return alert("Error: " + data.error);
+          }
+
           form.reset();
           fetchReviews();
-        });
+
+          const pagePoints = document.getElementById("page-points");
+          if (pagePoints && data.points !== undefined) {
+            pagePoints.textContent = data.points;
+          }
+
+          const navPoints = document.getElementById("nav-points");
+          if (navPoints && data.points !== undefined) {
+            navPoints.textContent = `Poin: ${data.points}`;
+          }
+        })
+        .catch(console.error);
       });
     }
 
     function editReview(id, rating, comment) {
       const newRating = prompt("Edit rating (1-5):", rating);
       const newComment = prompt("Edit komentar:", comment);
-      if (newRating && newComment) {
-        fetch(`/reviews/edit/${id}/`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": "{{ csrf_token }}"
-          },
-          body: JSON.stringify({ rating: newRating, comment: newComment })
-        })
-        .then(res => res.json())
-        .then(() => fetchReviews());
-      }
+      if (!newRating || !newComment) return;
+      fetch(`/reviews/edit/${id}/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({ rating: newRating, comment: newComment })
+      })
+      .then(() => fetchReviews())
+      .catch(console.error);
     }
 
     function deleteReview(id) {
-      if (confirm("Yakin ingin menghapus ulasan ini?")) {
-        fetch(`/reviews/delete/${id}/`, {
-          method: "DELETE",
-          headers: {
-            "X-CSRFToken": "{{ csrf_token }}"
-          }
-        })
-        .then(res => res.json())
-        .then(() => fetchReviews());
-      }
+      if (!confirm("Yakin ingin menghapus ulasan ini?")) return;
+      fetch(`/reviews/delete/${id}/`, {
+        method: "DELETE",
+        headers: { "X-CSRFToken": "{{ csrf_token }}" }
+      })
+      .then(() => fetchReviews())
+      .catch(console.error);
     }
   </script>
 </body>
