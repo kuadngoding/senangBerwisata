@@ -1,0 +1,249 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Senang Berwisata{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Color Palette */
+            --primary-blue: #348AA7;
+            --secondary-green: #BCE784;
+            --secondary-blue-green: #5DD39E;
+            --accent-blue: #003D5B;
+            --text-main: #999988;
+            --text-white: #FFFFFF;
+            --text-high-contrast: #000000;
+            --low-contrast: #666666;
+            --success: #BCC844;
+            --warning: #FFE090;
+            --error: #ED0000;
+            --separator-light: #D9DD99;
+        }
+
+        /* Typography */
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        h1 { font: 600 48px/58px 'Inter'; }
+        h2 { font: 600 40px/48px 'Inter'; }
+        h3 { font: 600 32px/38px 'Inter'; }
+        h4 { font: 600 28px/34px 'Inter'; }
+        h5 { font: 600 24px/28px 'Inter'; }
+        .subtitle-1 { font: 600 18px/28px 'Inter'; }
+        .subtitle-2 { font: 600 16px/24px 'Inter'; }
+        .body-1 { font: 400 16px/24px 'Inter'; }
+        .body-2 { font: 500 16px/24px 'Inter'; }
+        .body-3 { font: 400 14px/20px 'Inter'; }
+
+        /* Grid System */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 32px;
+            padding: 0 20px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: var(--text-white);
+        }
+
+        .btn-primary:hover {
+            background-color: #2a7088;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: var(--primary-blue);
+            padding: 16px 0;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            position: relative;
+            height: 600px;
+            background: 
+                linear-gradient(rgba(52, 138, 167, 0.8), rgba(52, 138, 167, 0.8)),
+                url('{% static "image/footer.jpg" %}');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            margin-bottom: 80px;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            color: var(--text-white);
+            max-width: 800px;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--primary-blue);
+            margin-top: 80px;
+        }
+
+        .grid-12 {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 32px;
+        }
+
+        .col-span-2 { grid-column: span 2; }
+        .col-span-3 { grid-column: span 3; }
+        .col-span-4 { grid-column: span 4; }
+        .col-span-12 { grid-column: span 12; }
+
+        .icon-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            transition: transform 0.3s;
+        }
+
+        .icon-button:hover {
+            transform: scale(1.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .col-span-2, .col-span-3, .col-span-4 {
+                grid-column: span 12;
+            }
+            
+            .hero-section {
+                height: 400px;
+                margin-bottom: 40px;
+            }
+
+            .hero-content h1 {
+                font-size: 48px !important;
+            }
+
+            .footer-top {
+                padding: 40px 0 !important;
+            }
+
+            .social-icons {
+                justify-content: flex-start !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <nav class="container">
+            <!-- Navigation content -->
+            <div class="col-span-12">
+                <!-- LOGO-->
+            </div>
+        </nav>
+    </header>
+
+    {% block hero_section %}
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1 style="font-size: 72px; line-height: 1.2; margin: 0">
+                    Senang<br>
+                    <span style="color: var(--secondary-green)">Berwisata</span>
+                </h1>
+                <p class="subtitle-1" style="margin-top: 24px">
+                    Where Happy Journeys Begin
+                </p>
+                <button class="btn btn-primary" style="margin-top: 32px">
+                    Jelajahi Sekarang
+                </button>
+            </div>
+        </div>
+    </section>
+    {% endblock %}
+
+    <main class="container">
+        {% block content %}
+        <!-- Main content -->
+        {% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top" style="padding: 64px 0; border-bottom: 1px solid var(--separator-light)">
+                <div class="grid-12">
+                    <div class="col-span-4">
+                        <h2 style="color: var(--text-white); margin-bottom: 16px">
+                            Senang<br>
+                            <span style="color: var(--secondary-green)">Berwisata</span>
+                        </h2>
+                        <p class="body-1" style="color: var(--text-white); opacity: 0.8">
+                            Where Happy<br>
+                            Journeys Begin
+                        </p>
+                    </div>
+
+                    <div class="col-span-2">
+                        <h5 class="subtitle-2" style="color: var(--text-white); margin-bottom: 12px">Tautan Cepat</h5>
+                        <ul style="list-style: none; padding: 0">
+                            <li><a href="#" class="body-1" style="color: var(--low-contrast); text-decoration: none">Tentang Kami</a></li>
+                            <li style="margin: 8px 0"><a href="#" class="body-1" style="color: var(--low-contrast); text-decoration: none">Blog</a></li>
+                            <li><a href="#" class="body-1" style="color: var(--low-contrast); text-decoration: none">Kebijakan Privasi</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-span-3">
+                        <h5 class="subtitle-2" style="color: var(--text-white); margin-bottom: 12px">Hubungi Kami</h5>
+                        <div class="contact-item" style="margin-bottom: 8px">
+                            <span class="body-1" style="color: var(--low-contrast)">📧 hello@senangberwisata.id</span>
+                        </div>
+                        <div class="contact-item">
+                            <span class="body-1" style="color: var(--low-contrast)">📱 +62 812 3456 7890</span>
+                        </div>
+                    </div>
+
+                    <div class="col-span-3">
+                        <h5 class="subtitle-2" style="color: var(--text-white); margin-bottom: 12px">Ikuti Kami</h5>
+                        <div class="social-icons" style="display: flex; gap: 16px">
+                            <a href="#" class="icon-button" style="background: var(--secondary-green); padding: 8px; border-radius: 50%">📸</a>
+                            <a href="#" class="icon-button" style="background: var(--secondary-green); padding: 8px; border-radius: 50%">📘</a>
+                            <a href="#" class="icon-button" style="background: var(--secondary-green); padding: 8px; border-radius: 50%">🎥</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom" style="padding: 24px 0">
+                <div class="grid-12">
+                    <div class="col-span-12">
+                        <p class="body-3" style="color: var(--low-contrast); text-align: center; margin: 0">
+                            © 2025 Senang Berwisata. All rights reserved.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
