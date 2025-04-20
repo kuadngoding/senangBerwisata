@@ -11,8 +11,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
+from dotenv import load_dotenv
 from pathlib import Path
 
+load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,7 +28,7 @@ SECRET_KEY = 'django-insecure-vfxn&)7s%8ze&=!v81@haeb0_fmh)hg4pwfk^0a42nq0g=r+6%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "senang-berwisata.up.railway.app"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "senang-berwisata.up.railway.app", "vital-gabbey-alyssalayla-72f2fa98.koyeb.app/"]
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
@@ -84,17 +86,18 @@ WSGI_APPLICATION = 'senangBerwisata.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-import dj_database_url
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600,
-        ssl_require=True
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'koyebdb',
+        'USER': 'koyeb-adm',
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': 'ep-square-mud-a2hck1ad.eu-central-1.pg.koyeb.app',
+        'PORT': '5432',
+        'OPTIONS': {'sslmode': 'require'},
+    }
 }
-
-DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
