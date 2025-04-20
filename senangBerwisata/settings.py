@@ -11,10 +11,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 from pathlib import Path
 
-load_dotenv
+#load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -92,7 +92,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'koyebdb',
         'USER': 'koyeb-adm',
-        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'PASSWORD': os.getenv('DB_PASSWORD') or 'MISSING',
         'HOST': 'ep-square-mud-a2hck1ad.eu-central-1.pg.koyeb.app',
         'PORT': '5432',
         'OPTIONS': {'sslmode': 'require'},
