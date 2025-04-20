@@ -121,30 +121,32 @@
       </a>
   </div>
 
-  <!-- Thematic Routes Grid -->
-  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem;">
-      {% for rute in tematik_list %}
-          <div style="background-color: #f8f9fa; border-radius: 1rem; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer;" onclick="window.location='{% url 'detail_rute' rute.pk %}'">
-              <div style="position: relative; height: 180px; overflow: hidden;">
-                  <img style="width: 100%; height: 100%; object-fit: cover;" src="{{ rute.gambar.url }}" alt="{{ rute.judul }}">
+  <!-- Thematic Routes - Horizontal Scrolling -->
+  <div style="width: 100%; position: relative;">
+      <div style="display: flex; overflow-x: auto; padding-bottom: 1.5rem; gap: 1.25rem;" class="no-scrollbar">
+          {% for rute in tematik_list %}
+              <div style="min-width: 280px; max-width: 280px; background-color: #f8f9fa; border-radius: 1rem; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; flex-shrink: 0;" onclick="window.location='{% url 'detail_rute' rute.pk %}'">
+                  <div style="position: relative; height: 180px; overflow: hidden;">
+                      <img style="width: 100%; height: 100%; object-fit: cover;" src="{{ rute.gambar.url }}" alt="{{ rute.judul }}">
+                  </div>
+                  <div style="padding: 1.25rem;">
+                      <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">
+                          <a href="{% url 'detail_rute' rute.pk %}" style="color: var(--text-main); text-decoration: none;">
+                              {{ rute.judul }}
+                          </a>
+                      </h3>
+                      <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; height: 3.6em;">
+                          {{ rute.deskripsi|truncatechars:150 }}
+                      </p>
+                      <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.75rem; font-style: italic;">
+                          By {{ rute.dibuat_oleh.username }} - {{ rute.tanggal_dibuat|date:"F d, Y" }}
+                      </p>
+                  </div>
               </div>
-              <div style="padding: 1.25rem;">
-                  <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">
-                      <a href="{% url 'detail_rute' rute.pk %}" style="color: var(--text-main); text-decoration: none;">
-                          {{ rute.judul }}
-                      </a>
-                  </h3>
-                  <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
-                      {{ rute.deskripsi|truncatechars:150 }}
-                  </p>
-                  <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.75rem; font-style: italic;">
-                      By {{ rute.dibuat_oleh.username }} - {{ rute.tanggal_dibuat|date:"F d, Y" }}
-                  </p>
-              </div>
-          </div>
-      {% empty %}
-          <p style="text-align: center; margin-top: 2.5rem; color: var(--text-main); grid-column: 1 / -1;">Belum ada rute tematik ditambahkan.</p>
-      {% endfor %}
+          {% empty %}
+              <p style="text-align: center; margin-top: 2.5rem; color: var(--text-main); width: 100%;">Belum ada rute tematik ditambahkan.</p>
+          {% endfor %}
+      </div>
   </div>
 
   <!-- Find more ideas button -->
