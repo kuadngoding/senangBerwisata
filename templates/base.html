@@ -175,14 +175,41 @@
 
         /* Footer */
         .footer {
+            position: relative;
             background-color: var(--primary-blue);
             color: var(--text-white);
             margin-top: 5rem;
+            overflow: hidden;
+        }
+
+        .footer-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.5;
+            z-index: 1;
+        }
+
+        .footer-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 100%);
+
+            z-index: 2;
+        }
+
+        .footer-container {
+            position: relative;
+            z-index: 3;
         }
 
         .footer-top {
             padding: 4rem 0;
-            border-bottom: 1px solid var(--separator-light);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             flex-wrap: wrap;
             gap: 2rem;
@@ -193,10 +220,22 @@
             min-width: 250px;
         }
 
+        .footer-link {
+            color: var(--text-white);
+            text-decoration: none;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+
+        .footer-link:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
         .footer-bottom {
             padding: 1.5rem 0;
             text-align: center;
-            color: var(--text-secondary);
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .social-icons {
@@ -213,6 +252,7 @@
             background: var(--secondary-green);
             border-radius: 50%;
             transition: transform 0.3s;
+            text-decoration: none;
         }
 
         .icon-button:hover {
@@ -316,38 +356,42 @@
     </main>
 
     <footer class="footer">
-        <div class="container">
+        <div class="footer-background" style="background-image: url('{% static "image/footer.jpg" %}');"></div>
+        <div class="footer-overlay"></div>
+        <div class="container footer-container">
             <div class="footer-top">
                 <div class="footer-column">
-                    <h2 style="margin-bottom: 1rem;">
-                        Senang<br>
-                        <span style="color: var(--secondary-green)">Berwisata</span>
-                    </h2>
-                    <p class="body-1" style="opacity: 0.8">
-                        Where Happy<br>
-                        Journeys Begin
-                    </p>
+                    <div class="footer-logo">
+                        <h2 style="margin-bottom: 1rem;">
+                            <span style="font-size: 3rem; font-weight: bold;">#</span> Senang<br>
+                            <span style="color: var(--secondary-green)">Berwisata</span>
+                        </h2>
+                        <p class="body-1" style="opacity: 0.9">
+                            Where Happy<br>
+                            Journeys Begin
+                        </p>
+                    </div>
                 </div>
-
+    
                 <div class="footer-column">
                     <h5 class="subtitle-2" style="margin-bottom: 0.75rem">Tautan Cepat</h5>
                     <ul style="list-style: none;">
-                        <li><a href="#" class="body-1" style="color: var(--text-secondary); text-decoration: none">Tentang Kami</a></li>
-                        <li style="margin: 0.5rem 0"><a href="#" class="body-1" style="color: var(--text-secondary); text-decoration: none">Blog</a></li>
-                        <li><a href="#" class="body-1" style="color: var(--text-secondary); text-decoration: none">Kebijakan Privasi</a></li>
+                        <li><a href="#" class="footer-link">Tentang Kami</a></li>
+                        <li style="margin: 0.5rem 0"><a href="#" class="footer-link">Blog</a></li>
+                        <li><a href="#" class="footer-link">Kebijakan Privasi</a></li>
                     </ul>
                 </div>
-
+    
                 <div class="footer-column">
                     <h5 class="subtitle-2" style="margin-bottom: 0.75rem">Hubungi Kami</h5>
                     <div style="margin-bottom: 0.5rem">
-                        <span class="body-1" style="color: var(--text-secondary)">📧 hello@senangberwisata.id</span>
+                        <span class="footer-contact">📧 hello@senangberwisata.id</span>
                     </div>
                     <div>
-                        <span class="body-1" style="color: var(--text-secondary)">📱 +62 812 3456 7890</span>
+                        <span class="footer-contact">📱 +62 812 3456 7890</span>
                     </div>
                 </div>
-
+    
                 <div class="footer-column">
                     <h5 class="subtitle-2" style="margin-bottom: 0.75rem">Ikuti Kami</h5>
                     <div class="social-icons">
@@ -357,7 +401,7 @@
                     </div>
                 </div>
             </div>
-
+    
             <div class="footer-bottom">
                 <p class="body-3">
                     © 2025 Senang Berwisata. All rights reserved.
