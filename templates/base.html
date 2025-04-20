@@ -13,54 +13,63 @@
             --secondary-green: #BCE784;
             --secondary-blue-green: #5DD39E;
             --accent-blue: #003D5B;
-            --text-main: #999988;
+            --text-main: #333333;
+            --text-secondary: #666666;
             --text-white: #FFFFFF;
-            --text-high-contrast: #000000;
-            --low-contrast: #666666;
+            --background-light: #F8F9FA;
             --success: #BCC844;
             --warning: #FFE090;
             --error: #ED0000;
-            --separator-light: #D9DD99;
+            --separator-light: #EEEEEE;
         }
 
-        /* Typography */
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             color: var(--text-main);
-            margin: 0;
-            padding: 0;
             line-height: 1.6;
+            background-color: var(--background-light);
         }
 
-        h1 { font: 600 48px/58px 'Inter'; }
-        h2 { font: 600 40px/48px 'Inter'; }
-        h3 { font: 600 32px/38px 'Inter'; }
-        h4 { font: 600 28px/34px 'Inter'; }
-        h5 { font: 600 24px/28px 'Inter'; }
-        .subtitle-1 { font: 600 18px/28px 'Inter'; }
-        .subtitle-2 { font: 600 16px/24px 'Inter'; }
-        .body-1 { font: 400 16px/24px 'Inter'; }
-        .body-2 { font: 500 16px/24px 'Inter'; }
-        .body-3 { font: 400 14px/20px 'Inter'; }
+        /* Typography */
+        h1 { font-size: 2.5rem; font-weight: 600; line-height: 1.2; }
+        h2 { font-size: 2rem; font-weight: 600; line-height: 1.2; }
+        h3 { font-size: 1.75rem; font-weight: 600; line-height: 1.3; }
+        h4 { font-size: 1.5rem; font-weight: 600; line-height: 1.3; }
+        h5 { font-size: 1.25rem; font-weight: 600; line-height: 1.4; }
+        .subtitle-1 { font-size: 1.125rem; font-weight: 600; line-height: 1.5; }
+        .subtitle-2 { font-size: 1rem; font-weight: 600; line-height: 1.5; }
+        .body-1 { font-size: 1rem; font-weight: 400; line-height: 1.5; }
+        .body-2 { font-size: 1rem; font-weight: 500; line-height: 1.5; }
+        .body-3 { font-size: 0.875rem; font-weight: 400; line-height: 1.4; }
 
-        /* Grid System */
+        /* Layout */
         .container {
+            width: 100%;
             max-width: 1280px;
             margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            gap: 32px;
-            padding: 0 20px;
+            padding: 0 1.25rem;
+        }
+
+        .main-content {
+            padding: 2rem 0;
         }
 
         /* Buttons */
         .btn {
-            padding: 12px 24px;
+            padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: 8px;
+            border-radius: 0.5rem;
             font-weight: 500;
-            transition: all 0.3s;
             cursor: pointer;
+            display: inline-block;
+            transition: all 0.2s ease;
         }
         
         .btn-primary {
@@ -75,53 +84,134 @@
         /* Navigation */
         .navbar {
             background-color: var(--primary-blue);
-            padding: 16px 0;
+            padding: 1rem 0;
+            color: var(--text-white);
         }
 
         /* Hero Section */
         .hero-section {
             position: relative;
-            height: 600px;
-            background: 
-                linear-gradient(rgba(52, 138, 167, 0.8), rgba(52, 138, 167, 0.8)),
-                url('{% static "image/footer.jpg" %}');
+            height: 680px;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
             background-size: cover;
             background-position: center;
-            display: flex;
-            align-items: center;
-            margin-bottom: 80px;
+            z-index: 1;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 100%);
+            z-index: 2;
         }
 
         .hero-content {
             position: relative;
-            z-index: 1;
-            color: var(--text-white);
-            max-width: 800px;
+            z-index: 3;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 1.25rem;
+        }
+
+        .hero-text {
+            max-width: 600px;
+            color: white;
+            margin-left: 2.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .search-bar {
+            position: absolute;
+            bottom: 2.5rem;
+            left: 0;
+            right: 0;
+            z-index: 3;
+            padding: 0 1.25rem;
+        }
+
+        .search-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            background-color: rgba(73, 73, 73, 0.4);
+            backdrop-filter: blur(4px);
+            border-radius: 2.5rem;
+            padding: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 0.75rem 0;
+            outline: none;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .search-button {
+            background-color: var(--secondary-blue-green);
+            color: white;
+            border: none;
+            border-radius: 2.5rem;
+            padding: 1rem 2rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-right: 0.25rem;
         }
 
         /* Footer */
         .footer {
             background-color: var(--primary-blue);
-            margin-top: 80px;
+            color: var(--text-white);
+            margin-top: 5rem;
         }
 
-        .grid-12 {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            gap: 32px;
+        .footer-top {
+            padding: 4rem 0;
+            border-bottom: 1px solid var(--separator-light);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
         }
 
-        .col-span-2 { grid-column: span 2; }
-        .col-span-3 { grid-column: span 3; }
-        .col-span-4 { grid-column: span 4; }
-        .col-span-12 { grid-column: span 12; }
+        .footer-column {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .footer-bottom {
+            padding: 1.5rem 0;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+        }
 
         .icon-button {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
+            width: 2.5rem;
+            height: 2.5rem;
+            background: var(--secondary-green);
+            border-radius: 50%;
             transition: transform 0.3s;
         }
 
@@ -129,61 +219,97 @@
             transform: scale(1.1);
         }
 
-        /* Responsive Design */
+        /* Hide scrollbar */
+        .no-scrollbar {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .col-span-2, .col-span-3, .col-span-4 {
-                grid-column: span 12;
-            }
-            
             .hero-section {
-                height: 400px;
-                margin-bottom: 40px;
+                height: 500px;
             }
 
-            .hero-content h1 {
-                font-size: 48px !important;
+            .hero-text {
+                margin-left: 1rem;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
             }
 
             .footer-top {
-                padding: 40px 0 !important;
+                flex-direction: column;
+                padding: 2.5rem 0;
             }
 
-            .social-icons {
-                justify-content: flex-start !important;
+            .footer-column {
+                width: 100%;
             }
         }
     </style>
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
     <header class="navbar">
-        <nav class="container">
+        <div class="container">
             <!-- Navigation content -->
-            <div class="col-span-12">
-                <!-- LOGO-->
+            <div class="logo">
+                <!-- Logo content -->
             </div>
-        </nav>
+        </div>
     </header>
 
     {% block hero_section %}
     <section class="hero-section">
-        <div class="container">
-            <div class="hero-content">
-                <h1 style="font-size: 72px; line-height: 1.2; margin: 0">
-                    Senang<br>
-                    <span style="color: var(--secondary-green)">Berwisata</span>
+        <!-- Background Image -->
+        <div class="hero-bg" style="background-image: url('{% static "image/hero.jpg" %}');"></div>
+        
+        <!-- Overlay -->
+        <div class="hero-overlay"></div>
+        
+        <!-- Content Container -->
+        <div class="hero-content">
+            <!-- Hero Text Content -->
+            <div class="hero-text">
+                <h1 style="margin-bottom: 1rem;">
+                    Discover<br>
+                    the Heart of Java
                 </h1>
-                <p class="subtitle-1" style="margin-top: 24px">
-                    Where Happy Journeys Begin
+                <p style="max-width: 540px; margin-bottom: 1.5rem;">
+                    Experience the soul of Java — from spiritual temples and misty volcanoes to soulful
+                    batik and traditional wayang performances. Through this website, let us guide you to
+                    the most magical, hidden, and heartfelt parts of Yogyakarta.
                 </p>
-                <button class="btn btn-primary" style="margin-top: 32px">
-                    Jelajahi Sekarang
+            </div>
+        </div>
+        
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <div class="search-container">
+                <span style="color: white; margin-left: 1.5rem; margin-right: 0.75rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </span>
+                <input type="text" 
+                       class="search-input"
+                       placeholder="Search for food, restaurant, destinations, cafe, etc.">
+                <button class="search-button">
+                    Search
                 </button>
             </div>
         </div>
     </section>
     {% endblock %}
-
-    <main class="container">
+    
+    <main class="container main-content">
         {% block content %}
         <!-- Main content -->
         {% endblock %}
@@ -191,59 +317,55 @@
 
     <footer class="footer">
         <div class="container">
-            <div class="footer-top" style="padding: 64px 0; border-bottom: 1px solid var(--separator-light)">
-                <div class="grid-12">
-                    <div class="col-span-4">
-                        <h2 style="color: var(--text-white); margin-bottom: 16px">
-                            Senang<br>
-                            <span style="color: var(--secondary-green)">Berwisata</span>
-                        </h2>
-                        <p class="body-1" style="color: var(--text-white); opacity: 0.8">
-                            Where Happy<br>
-                            Journeys Begin
-                        </p>
-                    </div>
+            <div class="footer-top">
+                <div class="footer-column">
+                    <h2 style="margin-bottom: 1rem;">
+                        Senang<br>
+                        <span style="color: var(--secondary-green)">Berwisata</span>
+                    </h2>
+                    <p class="body-1" style="opacity: 0.8">
+                        Where Happy<br>
+                        Journeys Begin
+                    </p>
+                </div>
 
-                    <div class="col-span-2">
-                        <h5 class="subtitle-2" style="color: var(--text-white); margin-bottom: 12px">Tautan Cepat</h5>
-                        <ul style="list-style: none; padding: 0">
-                            <li><a href="#" class="body-1" style="color: var(--low-contrast); text-decoration: none">Tentang Kami</a></li>
-                            <li style="margin: 8px 0"><a href="#" class="body-1" style="color: var(--low-contrast); text-decoration: none">Blog</a></li>
-                            <li><a href="#" class="body-1" style="color: var(--low-contrast); text-decoration: none">Kebijakan Privasi</a></li>
-                        </ul>
-                    </div>
+                <div class="footer-column">
+                    <h5 class="subtitle-2" style="margin-bottom: 0.75rem">Tautan Cepat</h5>
+                    <ul style="list-style: none;">
+                        <li><a href="#" class="body-1" style="color: var(--text-secondary); text-decoration: none">Tentang Kami</a></li>
+                        <li style="margin: 0.5rem 0"><a href="#" class="body-1" style="color: var(--text-secondary); text-decoration: none">Blog</a></li>
+                        <li><a href="#" class="body-1" style="color: var(--text-secondary); text-decoration: none">Kebijakan Privasi</a></li>
+                    </ul>
+                </div>
 
-                    <div class="col-span-3">
-                        <h5 class="subtitle-2" style="color: var(--text-white); margin-bottom: 12px">Hubungi Kami</h5>
-                        <div class="contact-item" style="margin-bottom: 8px">
-                            <span class="body-1" style="color: var(--low-contrast)">📧 hello@senangberwisata.id</span>
-                        </div>
-                        <div class="contact-item">
-                            <span class="body-1" style="color: var(--low-contrast)">📱 +62 812 3456 7890</span>
-                        </div>
+                <div class="footer-column">
+                    <h5 class="subtitle-2" style="margin-bottom: 0.75rem">Hubungi Kami</h5>
+                    <div style="margin-bottom: 0.5rem">
+                        <span class="body-1" style="color: var(--text-secondary)">📧 hello@senangberwisata.id</span>
                     </div>
+                    <div>
+                        <span class="body-1" style="color: var(--text-secondary)">📱 +62 812 3456 7890</span>
+                    </div>
+                </div>
 
-                    <div class="col-span-3">
-                        <h5 class="subtitle-2" style="color: var(--text-white); margin-bottom: 12px">Ikuti Kami</h5>
-                        <div class="social-icons" style="display: flex; gap: 16px">
-                            <a href="#" class="icon-button" style="background: var(--secondary-green); padding: 8px; border-radius: 50%">📸</a>
-                            <a href="#" class="icon-button" style="background: var(--secondary-green); padding: 8px; border-radius: 50%">📘</a>
-                            <a href="#" class="icon-button" style="background: var(--secondary-green); padding: 8px; border-radius: 50%">🎥</a>
-                        </div>
+                <div class="footer-column">
+                    <h5 class="subtitle-2" style="margin-bottom: 0.75rem">Ikuti Kami</h5>
+                    <div class="social-icons">
+                        <a href="#" class="icon-button">📸</a>
+                        <a href="#" class="icon-button">📘</a>
+                        <a href="#" class="icon-button">🎥</a>
                     </div>
                 </div>
             </div>
 
-            <div class="footer-bottom" style="padding: 24px 0">
-                <div class="grid-12">
-                    <div class="col-span-12">
-                        <p class="body-3" style="color: var(--low-contrast); text-align: center; margin: 0">
-                            © 2025 Senang Berwisata. All rights reserved.
-                        </p>
-                    </div>
-                </div>
+            <div class="footer-bottom">
+                <p class="body-3">
+                    © 2025 Senang Berwisata. All rights reserved.
+                </p>
             </div>
         </div>
     </footer>
+    
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
