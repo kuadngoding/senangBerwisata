@@ -1,13 +1,5 @@
 from django.db import models
 
-# Create your models here.
-
-from django.db import models
-
-# place/models.py
-
-from django.db import models
-
 class Place(models.Model):
     name = models.CharField(max_length=255)
     address = models.TextField()

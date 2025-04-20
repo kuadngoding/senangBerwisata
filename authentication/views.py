@@ -8,12 +8,14 @@ from django.views.decorators.http import require_http_methods
 from authentication.forms import CustomUserCreationForm
 import json
 from coupon.models import Coupon
+from review.models import Review
 
 User = get_user_model()
 
 @login_required(login_url='/auth/login')
 def profile(request):
     user = request.user
+    reviews = Review.objects.filter(user=user).select_related('place') 
     redeemed_coupons = Coupon.objects.filter(
         user=user, 
         is_redeemed=True
@@ -33,6 +35,7 @@ def profile(request):
         'email': user.email,
         'points': user.points,
         'coupons': redeemed_coupons,
+        'reviews': reviews,
     }
     return render(request, 'profile.html', context)
 

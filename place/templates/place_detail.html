@@ -5,6 +5,16 @@
   <meta charset="UTF-8">
   <title>{{ place.name }} – Detail</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .star {
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: #d1d5db; /* gray-300 */
+    }
+    .star.selected {
+      color: #facc15; /* yellow-400 */
+    }
+  </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
   {% include 'navbar.html' %}
@@ -43,20 +53,19 @@
     </div>
 
     <h2 class="text-2xl font-semibold mt-10 mb-4">Ulasan Pengunjung</h2>
-    <div id="reviews" class="space-y-4 mb-6">Memuat ulasan...</div>
+    <div id="reviews" class="space-y-4 mb-6 text-sm text-gray-800">Memuat ulasan...</div>
 
     {% if user.is_authenticated %}
       <form id="review-form" class="bg-white p-4 rounded shadow-md space-y-4">
         {% csrf_token %}
         <div>
-          <label for="rating" class="block font-medium">Rating (1–5):</label>
-          <select id="rating" class="mt-1 w-full border rounded px-2 py-1">
-            <option value="1">⭐</option>
-            <option value="2">⭐⭐</option>
-            <option value="3">⭐⭐⭐</option>
-            <option value="4">⭐⭐⭐⭐</option>
-            <option value="5">⭐⭐⭐⭐⭐</option>
-          </select>
+          <label class="block font-medium mb-1">Rating:</label>
+          <div id="star-container" class="flex gap-1">
+            {% for i in "12345" %}
+              <span class="star" data-value="{{ forloop.counter }}">&#9733;</span>
+            {% endfor %}
+          </div>
+          <input type="hidden" id="rating" value="0">
         </div>
         <div>
           <label for="comment" class="block font-medium">Komentar:</label>
@@ -94,19 +103,21 @@
           } else {
             reviews.forEach(review => {
               const isOwner = review.user === username;
+              const created = new Date(review.created_at).toLocaleDateString();
+              const updated = review.updated_at ? new Date(review.updated_at).toLocaleDateString() : null;
               const stars = "⭐".repeat(review.rating);
+
               reviewsContainer.innerHTML += `
-                <div class="border-b pb-2">
+                <div class="bg-white p-4 rounded shadow-md">
                   <p class="font-semibold">${review.user}</p>
-                  <p class="text-yellow-500">${stars}</p>
-                  <p>${review.comment}</p>
+                  <p><span class="font-medium">Rating:</span> <span class="text-yellow-500">${stars}</span></p>
+                  <p><span class="font-medium">Deskripsi:</span> ${review.comment}</p>
                   <p class="text-sm text-gray-500">
-                    ${new Date(review.created_at).toLocaleDateString()}
+                    Dibuat: ${created}
+                    ${updated ? `<br>Diperbarui: ${updated}` : ""}
                   </p>
                   ${isOwner ? `
-                    <button onclick="editReview(${review.id}, ${review.rating}, 
-                      \`${review.comment.replace(/`/g, '\\`')}\`)"
-                            class="text-blue-600 text-sm mr-2">Edit</button>
+                    <a href="/reviews/edit/${review.id}/" class="text-blue-600 text-sm mt-1 inline-block hover:underline">Edit</a>
                   ` : ""}
                 </div>
               `;
@@ -117,11 +128,26 @@
 
     fetchReviews();
 
+    // Star rating interaction
+    const stars = document.querySelectorAll(".star");
+    const ratingInput = document.getElementById("rating");
+
+    stars.forEach(star => {
+      star.addEventListener("click", () => {
+        const value = parseInt(star.dataset.value);
+        ratingInput.value = value;
+        stars.forEach(s => s.classList.remove("selected"));
+        for (let i = 0; i < value; i++) {
+          stars[i].classList.add("selected");
+        }
+      });
+    });
+
     const form = document.getElementById("review-form");
     if (form) {
       form.addEventListener("submit", function(e) {
         e.preventDefault();
-        const rating = document.getElementById("rating").value;
+        const rating = ratingInput.value;
         const comment = document.getElementById("comment").value;
 
         fetch(`/reviews/place/${placeId}/add/`, {
@@ -139,6 +165,8 @@
           }
 
           form.reset();
+          ratingInput.value = 0;
+          stars.forEach(s => s.classList.remove("selected"));
           fetchReviews();
 
           const pagePoints = document.getElementById("page-points");
@@ -154,23 +182,6 @@
         .catch(console.error);
       });
     }
-
-    function editReview(id, rating, comment) {
-      const newRating = prompt("Edit rating (1-5):", rating);
-      const newComment = prompt("Edit komentar:", comment);
-      if (!newRating || !newComment) return;
-      fetch(`/reviews/edit/${id}/`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": "{{ csrf_token }}"
-        },
-        body: JSON.stringify({ rating: newRating, comment: newComment })
-      })
-      .then(() => fetchReviews())
-      .catch(console.error);
-    }
-
   </script>
 </body>
 </html>
