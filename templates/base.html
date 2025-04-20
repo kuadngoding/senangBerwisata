@@ -80,14 +80,7 @@
         .btn-primary:hover {
             background-color: #2a7088;
         }
-
-        /* Navigation */
-        .navbar {
-            background-color: var(--primary-blue);
-            padding: 1rem 0;
-            color: var(--text-white);
-        }
-
+        
         /* Hero Section */
         .hero-section {
             position: relative;
@@ -297,12 +290,7 @@
 </head>
 <body>
     <header class="navbar">
-        <div class="container">
-            <!-- Navigation content -->
-            <div class="logo">
-                <!-- Logo content -->
-            </div>
-        </div>
+        {% include 'navbar.html' %}
     </header>
 
     {% block hero_section %}
