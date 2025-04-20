@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-vfxn&)7s%8ze&=!v81@haeb0_fmh)hg4pwfk^0a42nq0g=r+6%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "senang-berwisata.up.railway.app", "vital-gabbey-alyssalayla-72f2fa98.koyeb.app/"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "senang-berwisata.up.railway.app", "vital-gabbey-alyssalayla-72f2fa98.koyeb.app"]
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
