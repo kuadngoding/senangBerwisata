@@ -4,6 +4,6 @@ django-cors-headers
 python-dotenv
 gunicorn
 pytest-django
-Pillow==10.3.0
+Pillow
 whitenoise
 dj-database-url
