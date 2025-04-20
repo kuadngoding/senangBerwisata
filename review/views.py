@@ -1,12 +1,14 @@
+import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
-from django.shortcuts import get_object_or_404
-import json
-
+from django.shortcuts import get_object_or_404, render, redirect
+from .forms import ReviewForm
 from .models import Review
 from place.models import Place
+from django.utils import timezone
+
 
 @require_http_methods(["GET"])
 def get_reviews(request, place_id):
@@ -18,6 +20,7 @@ def get_reviews(request, place_id):
         'rating': r.rating,
         'comment': r.comment,
         'created_at': r.created_at.strftime('%Y-%m-%d %H:%M'),
+        'updated_at': r.updated_at.strftime('%Y-%m-%d %H:%M') if r.updated_at else None,
     } for r in reviews]
     return JsonResponse({'reviews': data})
 
@@ -55,12 +58,18 @@ def add_review(request, place_id):
 
 
 @csrf_exempt
-@require_http_methods(["PUT"])
-@login_required(login_url='/auth/login')
-def edit_review(request, review_id):
-    review = get_object_or_404(Review, pk=review_id, user=request.user)
-    data = json.loads(request.body)
-    review.rating = data.get('rating', review.rating)
-    review.comment = data.get('comment', review.comment)
-    review.save()
-    return JsonResponse({'message': 'Review updated successfully'})
+@login_required
+def update_review(request, review_id):
+    review = get_object_or_404(Review, id=review_id, user=request.user)
+
+    if request.method == 'POST':
+        form = ReviewForm(request.POST, instance=review)
+        if form.is_valid():
+            updated_review = form.save(commit=False)
+            updated_review.updated_at = timezone.now()
+            updated_review.save()
+            return redirect('place_detail', pk=review.place.id)
+    else:
+        form = ReviewForm(instance=review)
+
+    return render(request, 'edit_review.html', {'form': form, 'review': review})

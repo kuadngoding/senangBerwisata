@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Ulasan {{ review.place.name }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    function setRating(element) {
+      const rating = parseInt(element.getAttribute('data-rating'));
+      document.getElementById('rating-input').value = rating;
+      const stars = document.querySelectorAll('.star');
+      stars.forEach((star, i) => {
+        star.textContent = i < rating ? '★' : '☆';
+      });
+    }
+  </script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  {% include 'navbar.html' %}
+
+  <div class="container mx-auto px-4 py-8">
+    <a href="{% url 'place_detail' pk=review.place.id %}" class="text-blue-600 hover:underline mb-4 inline-block">
+      ← Kembali ke detail tempat
+    </a>
+
+    <h1 class="text-2xl font-bold mb-6">Edit Ulasan untuk <span class="text-green-700">{{ review.place.name }}</span></h1>
+
+    <form method="post" class="bg-white p-6 rounded-xl shadow-md space-y-6">
+      {% csrf_token %}
+
+      <!-- Rating Bintang -->
+      <div>
+        <label class="block font-medium mb-2">Rating:</label>
+        <div class="flex space-x-1 text-3xl text-yellow-400 cursor-pointer">
+          {% for i in "12345" %}
+            <span class="star hover:text-yellow-500" 
+                  data-rating="{{ i|add:'0' }}" 
+                  onclick="setRating(this)">
+              {% if form.initial.rating >= i|add:'0' %}★{% else %}☆{% endif %}
+            </span>
+          {% endfor %}
+        </div>
+        <input type="hidden" name="rating" id="rating-input" value="{{ form.initial.rating }}">
+      </div>
+
+      <!-- Komentar -->
+      <div>
+        <label for="comment" class="block font-medium mb-2">Komentar:</label>
+        <textarea name="comment" id="comment" rows="5"
+                  class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-400"
+                  placeholder="Tulis komentarmu di sini...">{{ form.initial.comment }}</textarea>
+      </div>
+
+      <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition">
+        Simpan Perubahan
+      </button>
+    </form>
+  </div>
+</body>
+</html>
