@@ -1,60 +1,101 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <title>Edit Ulasan {{ review.place.name }}</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    function setRating(element) {
-      const rating = parseInt(element.getAttribute('data-rating'));
-      document.getElementById('rating-input').value = rating;
-      const stars = document.querySelectorAll('.star');
-      stars.forEach((star, i) => {
-        star.textContent = i < rating ? '★' : '☆';
-      });
-    }
-  </script>
-</head>
-<body class="bg-gray-100 text-gray-800">
-  {% include 'navbar.html' %}
+{% extends "base.html" %}
+{% load static %}
 
-  <div class="container mx-auto px-4 py-8">
-    <a href="{% url 'place_detail' pk=review.place.id %}" class="text-blue-600 hover:underline mb-4 inline-block">
+{% block title %}Edit Ulasan - {{ review.place.name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .star {
+    cursor: pointer;
+    font-size: 1.75rem;
+    color: #d1d5db;
+    transition: color 0.2s;
+  }
+
+  .star.selected,
+  .star:hover {
+    color: #facc15;
+  }
+
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .form-textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    resize: vertical;
+  }
+
+  .btn-submit {
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+    
+  .btn-submit:hover {
+    background-color: var(--accent-blue);
+  }
+</style>
+{% endblock %}
+{% block hero_section %}{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-2xl">
+  <div class="mb-4 text-sm">
+    <a href="{% url 'place_detail' pk=review.place.id %}" class="text-blue-600 hover:underline">
       ← Kembali ke detail tempat
     </a>
-
-    <h1 class="text-2xl font-bold mb-6">Edit Ulasan untuk <span class="text-green-700">{{ review.place.name }}</span></h1>
-
-    <form method="post" class="bg-white p-6 rounded-xl shadow-md space-y-6">
-      {% csrf_token %}
-
-      <!-- Rating Bintang -->
-      <div>
-        <label class="block font-medium mb-2">Rating:</label>
-        <div class="flex space-x-1 text-3xl text-yellow-400 cursor-pointer">
-          {% for i in "12345" %}
-            <span class="star hover:text-yellow-500" 
-                  data-rating="{{ i|add:'0' }}" 
-                  onclick="setRating(this)">
-              {% if form.initial.rating >= i|add:'0' %}★{% else %}☆{% endif %}
-            </span>
-          {% endfor %}
-        </div>
-        <input type="hidden" name="rating" id="rating-input" value="{{ form.initial.rating }}">
-      </div>
-
-      <!-- Komentar -->
-      <div>
-        <label for="comment" class="block font-medium mb-2">Komentar:</label>
-        <textarea name="comment" id="comment" rows="5"
-                  class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-400"
-                  placeholder="Tulis komentarmu di sini...">{{ form.initial.comment }}</textarea>
-      </div>
-
-      <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition">
-        Simpan Perubahan
-      </button>
-    </form>
   </div>
-</body>
-</html>
+
+  <h1 class="text-2xl font-semibold mb-6 text-gray-800">Edit Ulasan untuk <span class="text-green-700">{{ review.place.name }}</span></h1>
+
+  <form method="post" class="bg-white p-6 rounded-lg shadow space-y-6">
+    {% csrf_token %}
+
+    <!-- Rating -->
+    <div>
+      <label class="form-label">Rating:</label>
+      <div class="flex space-x-1">
+        {% for i in "12345" %}
+          <span class="star {% if form.initial.rating >= i|add:'0' %}selected{% endif %}" 
+                data-rating="{{ i|add:'0' }}" 
+                onclick="setRating(this)">★</span>
+        {% endfor %}
+      </div>
+      <input type="hidden" name="rating" id="rating-input" value="{{ form.initial.rating }}">
+    </div>
+
+    <!-- Komentar -->
+    <div>
+      <label for="comment" class="form-label">Komentar:</label>
+      <textarea name="comment" id="comment" rows="5" class="form-textarea" placeholder="Tulis komentarmu di sini...">{{ form.initial.comment }}</textarea>
+    </div>
+
+    <button type="submit" class="btn-submit">Edit Ulasan</button>
+
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function setRating(element) {
+    const rating = parseInt(element.getAttribute('data-rating'));
+    document.getElementById('rating-input').value = rating;
+    const stars = document.querySelectorAll('.star');
+    stars.forEach((star, i) => {
+      star.classList.toggle('selected', i < rating);
+    });
+  }
+</script>
+{% endblock %}

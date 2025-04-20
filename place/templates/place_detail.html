@@ -1,187 +1,447 @@
-<!-- templates/place_detail.html -->
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <title>{{ place.name }} – Detail</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ place.name }} - Senang Berwisata{% endblock %}
+
+{% block extra_css %}
+<style>
     .star {
-      cursor: pointer;
-      font-size: 1.5rem;
-      color: #d1d5db; /* gray-300 */
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: #d1d5db;
     }
     .star.selected {
-      color: #facc15; /* yellow-400 */
+        color: #facc15;
     }
-  </style>
-</head>
-<body class="bg-gray-100 text-gray-800">
-  {% include 'navbar.html' %}
+    
+    .rating-star {
+        color: #facc15;
+    }
+    
+    .rating-star.empty {
+        color: #d1d5db;
+    }
+    
+    .breadcrumb {
+        display: flex;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        margin: 1rem 0;
+    }
+    
+    .breadcrumb a {
+        color: var(--primary-blue);
+        text-decoration: none;
+    }
+    
+    .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+    
+    .place-header {
+        margin-bottom: 2rem;
+    }
+    
+    .place-title {
+        color: var(--text-main);
+        margin-bottom: 0.5rem;
+    }
+    
+    .place-address {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .place-map-link {
+        color: var(--secondary-blue-green);
+        font-size: 0.875rem;
+        text-decoration: none;
+    }
+    
+    .place-map-link:hover {
+        text-decoration: underline;
+    }
+    
+    .place-description {
+        color: var(--text-main);
+        margin: 1.5rem 0;
+        line-height: 1.6;
+    }
+    
+    .gallery-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin: 2rem 0;
+    }
+    
+    @media (min-width: 640px) {
+        .gallery-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (min-width: 768px) {
+        .gallery-container {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    .gallery-image {
+        width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .section-title {
+        color: var(--text-main);
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 2.5rem 0 1rem;
+    }
+    
+    .review-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .review-card {
+        background-color: white;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .review-user {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .review-details {
+        margin-bottom: 0.5rem;
+    }
+    
+    .review-timestamp {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+    }
+    
+    .review-edit {
+        color: var(--primary-blue);
+        font-size: 0.875rem;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 0.5rem;
+    }
+    
+    .review-edit:hover {
+        text-decoration: underline;
+    }
+    
+    .review-form {
+        background-color: white;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .form-label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-textarea {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid var(--separator-light);
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .btn-submit {
+        background-color: var(--primary-blue);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.2s;
+    }
+    
+    .btn-submit:hover {
+        background-color: var(--accent-blue);
+    }
+    
+    .rating-display {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .share-container {
+        display: flex;
+        margin: 1.5rem 0;
+    }
+    
+    .share-button {
+        background-color: var(--secondary-blue-green);
+        color: white;
+        padding: 0.75rem 0;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        flex: 1;
+        text-align: center;
+        font-weight: 500;
+        transition: background-color 0.2s;
+    }
+    
+    .share-button:hover {
+        background-color: #4cbb8b;
+    }
+    
+    .favorite-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3rem;
+        background-color: white;
+        border: 1px solid var(--separator-light);
+        border-radius: 0.5rem;
+        margin-left: 0.75rem;
+        cursor: pointer;
+    }
+    
+    .user-points {
+        text-align: right;
+        margin: 1rem 0;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+    
+    .place-banner {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .image-thumbnails {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 2rem;
+    }
+    
+    .thumbnail {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 0.5rem;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
 
-  {% if user.is_authenticated %}
-    <div class="container mx-auto px-4 mt-4">
-      <p class="text-right text-sm font-medium">
-        Poin Anda: <span id="page-points">{{ user.points }}</span>
-      </p>
-    </div>
-  {% endif %}
+{% block hero_section %}{% endblock %}
 
-  <div class="container mx-auto px-4 py-8">
-    <a href="{% url 'place_list' %}" class="text-blue-600 hover:underline mb-6 inline-block">
-      ← Kembali ke daftar
-    </a>
+{% block content %}
+{% if user.is_authenticated %}
+<div class="user-points">
+    Poin Anda: <span id="page-points">{{ user.points }}</span>
+</div>
+{% endif %}
 
-    <h1 class="text-3xl font-bold mb-2">{{ place.name }}</h1>
-    <p class="text-sm text-gray-600 mb-1">{{ place.address }}</p>
-    <a href="{{ place.google_maps_link }}" target="_blank"
-       class="text-green-600 text-sm hover:underline">Lihat di Google Maps</a>
-    <p class="mt-4 text-gray-700">{{ place.description }}</p>
+<div class="breadcrumb">
+    <a href="{% url 'place_list' %}">Place to Go</a>
+    <span>/</span>
+    <span>{{ place.name }}</span>
+</div>
 
-    <h2 class="text-2xl font-semibold mt-8 mb-4">Galeri Foto</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-      <img src="{{ place.photo_main.url }}" alt="Foto utama" class="rounded-lg shadow">
-      {% if place.photo_1 %}
-        <img src="{{ place.photo_1.url }}" alt="Foto 1" class="rounded-lg shadow">
-      {% endif %}
-      {% if place.photo_2 %}
-        <img src="{{ place.photo_2.url }}" alt="Foto 2" class="rounded-lg shadow">
-      {% endif %}
-      {% if place.photo_3 %}
-        <img src="{{ place.photo_3.url }}" alt="Foto 3" class="rounded-lg shadow">
-      {% endif %}
-    </div>
+<img src="{{ place.photo_main.url }}" alt="{{ place.name }}" class="place-banner">
 
-    <h2 class="text-2xl font-semibold mt-10 mb-4">Ulasan Pengunjung</h2>
-    <div id="reviews" class="space-y-4 mb-6 text-sm text-gray-800">Memuat ulasan...</div>
-
-    {% if user.is_authenticated %}
-      <form id="review-form" class="bg-white p-4 rounded shadow-md space-y-4">
-        {% csrf_token %}
-        <div>
-          <label class="block font-medium mb-1">Rating:</label>
-          <div id="star-container" class="flex gap-1">
-            {% for i in "12345" %}
-              <span class="star" data-value="{{ forloop.counter }}">&#9733;</span>
-            {% endfor %}
-          </div>
-          <input type="hidden" id="rating" value="0">
-        </div>
-        <div>
-          <label for="comment" class="block font-medium">Komentar:</label>
-          <textarea id="comment" rows="3"
-                    class="mt-1 w-full border rounded px-2 py-1"
-                    placeholder="Tulis ulasanmu..."></textarea>
-        </div>
-        <button type="submit"
-                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-          Kirim Ulasan
-        </button>
-      </form>
-    {% else %}
-      <p class="text-gray-600">
-        Silakan <a href="{% url 'login' %}" class="text-blue-600 underline">login</a>
-        untuk memberi ulasan.
-      </p>
+<div class="image-thumbnails">
+    {% if place.photo_1 %}
+    <img src="{{ place.photo_1.url }}" alt="Foto 1" class="thumbnail">
     {% endif %}
-  </div>
+    {% if place.photo_2 %}
+    <img src="{{ place.photo_2.url }}" alt="Foto 2" class="thumbnail">
+    {% endif %}
+    {% if place.photo_3 %}
+    <img src="{{ place.photo_3.url }}" alt="Foto 3" class="thumbnail">
+    {% endif %}
+</div>
 
-  <script>
+<div class="place-header">
+    <h1 class="place-title">{{ place.name }}</h1>
+    <p class="place-address">{{ place.address }}</p>
+    <a href="{{ place.google_maps_link }}" target="_blank" class="place-map-link">Lihat di Google Maps</a>
+    
+    <div class="rating-display">
+        <div>
+            {% for i in "12345" %}
+            <span class="rating-star {% if forloop.counter > place.average_rating %}empty{% endif %}">★</span>
+            {% endfor %}
+        </div>
+        <span>{{ place.average_rating|floatformat:1 }} / 5.0</span>
+    </div>
+</div>
+
+<div class="share-container">
+    <button class="share-button">Share with your friends</button>
+    <button class="favorite-button">❤️</button>
+</div>
+
+<h2 class="section-title">Description</h2>
+<p class="place-description">{{ place.description }}</p>
+<a href="#" class="place-map-link">Read More</a>
+
+<h2 class="section-title">Review & Rating</h2>
+<p class="body-2">Ratings and reviews are verified and are from people who use this website as you are</p>
+
+<div id="reviews" class="review-container">
+    <p>Memuat ulasan...</p>
+</div>
+
+{% if user.is_authenticated %}
+<form id="review-form" class="review-form">
+    {% csrf_token %}
+    <div style="margin-bottom: 1rem;">
+        <label class="form-label">Rating:</label>
+        <div id="star-container" class="flex gap-1">
+            {% for i in "12345" %}
+            <span class="star" data-value="{{ forloop.counter }}">★</span>
+            {% endfor %}
+        </div>
+        <input type="hidden" id="rating" value="0">
+    </div>
+    <div>
+        <label for="comment" class="form-label">Komentar:</label>
+        <textarea id="comment" rows="3" class="form-textarea" placeholder="Tulis ulasanmu..."></textarea>
+    </div>
+    <button type="submit" class="btn-submit">Kirim Ulasan</button>
+</form>
+{% else %}
+<p class="body-2" style="margin: 1.5rem 0;">
+    Silakan <a href="{% url 'login' %}" class="place-map-link">login</a> untuk memberi ulasan.
+</p>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
     const reviewsContainer = document.getElementById("reviews");
     const placeId = "{{ place.id }}";
     const username = "{{ user.username }}";
 
     function fetchReviews() {
-      fetch(`/reviews/place/${placeId}/`)
-        .then(res => res.json())
-        .then(data => {
-          const reviews = data.reviews;
-          reviewsContainer.innerHTML = "";
+        fetch(`/reviews/place/${placeId}/`)
+            .then(res => res.json())
+            .then(data => {
+                const reviews = data.reviews;
+                reviewsContainer.innerHTML = "";
 
-          if (reviews.length === 0) {
-            reviewsContainer.innerHTML = "<p>Belum ada ulasan.</p>";
-          } else {
-            reviews.forEach(review => {
-              const isOwner = review.user === username;
-              const created = new Date(review.created_at).toLocaleDateString();
-              const updated = review.updated_at ? new Date(review.updated_at).toLocaleDateString() : null;
-              const stars = "⭐".repeat(review.rating);
+                if (reviews.length === 0) {
+                    reviewsContainer.innerHTML = "<p>Belum ada ulasan.</p>";
+                } else {
+                    reviews.forEach(review => {
+                        const isOwner = review.user === username;
+                        const created = new Date(review.created_at).toLocaleDateString();
+                        const updated = review.updated_at ? new Date(review.updated_at).toLocaleDateString() : null;
+                        const stars = "⭐".repeat(review.rating);
 
-              reviewsContainer.innerHTML += `
-                <div class="bg-white p-4 rounded shadow-md">
-                  <p class="font-semibold">${review.user}</p>
-                  <p><span class="font-medium">Rating:</span> <span class="text-yellow-500">${stars}</span></p>
-                  <p><span class="font-medium">Deskripsi:</span> ${review.comment}</p>
-                  <p class="text-sm text-gray-500">
-                    Dibuat: ${created}
-                    ${updated ? `<br>Diperbarui: ${updated}` : ""}
-                  </p>
-                  ${isOwner ? `
-                    <a href="/reviews/edit/${review.id}/" class="text-blue-600 text-sm mt-1 inline-block hover:underline">Edit</a>
-                  ` : ""}
-                </div>
-              `;
+                        reviewsContainer.innerHTML += `
+                            <div class="review-card">
+                                <p class="review-user">${review.user}</p>
+                                <p class="review-details"><span style="font-weight: 500;">Rating:</span> <span style="color: #facc15;">${stars}</span></p>
+                                <p class="review-details"><span style="font-weight: 500;">Deskripsi:</span> ${review.comment}</p>
+                                <p class="review-timestamp">
+                                    Dibuat: ${created}
+                                    ${updated ? `<br>Diperbarui: ${updated}` : ""}
+                                </p>
+                                ${isOwner ? `
+                                    <a href="/reviews/edit/${review.id}/" class="review-edit">Edit</a>
+                                ` : ""}
+                            </div>
+                        `;
+                    });
+                }
             });
-          }
-        });
     }
 
     fetchReviews();
 
-    // Star rating interaction
     const stars = document.querySelectorAll(".star");
     const ratingInput = document.getElementById("rating");
 
     stars.forEach(star => {
-      star.addEventListener("click", () => {
-        const value = parseInt(star.dataset.value);
-        ratingInput.value = value;
-        stars.forEach(s => s.classList.remove("selected"));
-        for (let i = 0; i < value; i++) {
-          stars[i].classList.add("selected");
-        }
-      });
+        star.addEventListener("click", () => {
+            const value = parseInt(star.dataset.value);
+            ratingInput.value = value;
+            stars.forEach(s => s.classList.remove("selected"));
+            for (let i = 0; i < value; i++) {
+                stars[i].classList.add("selected");
+            }
+        });
+    });
+
+    const largeStars = document.querySelectorAll(".large-star");
+    largeStars.forEach((star, index) => {
+        star.addEventListener("click", () => {
+            largeStars.forEach(s => s.style.color = "#d1d5db");
+            for (let i = 0; i <= index; i++) {
+                largeStars[i].style.color = "#facc15";
+                largeStars[i].textContent = "★";
+            }
+        });
     });
 
     const form = document.getElementById("review-form");
     if (form) {
-      form.addEventListener("submit", function(e) {
-        e.preventDefault();
-        const rating = ratingInput.value;
-        const comment = document.getElementById("comment").value;
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+            const rating = ratingInput.value;
+            const comment = document.getElementById("comment").value;
 
-        fetch(`/reviews/place/${placeId}/add/`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": "{{ csrf_token }}"
-          },
-          body: JSON.stringify({ rating, comment })
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (data.error) {
-            return alert("Error: " + data.error);
-          }
+            fetch(`/reviews/place/${placeId}/add/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({ rating, comment })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    return alert("Error: " + data.error);
+                }
 
-          form.reset();
-          ratingInput.value = 0;
-          stars.forEach(s => s.classList.remove("selected"));
-          fetchReviews();
+                form.reset();
+                ratingInput.value = 0;
+                stars.forEach(s => s.classList.remove("selected"));
+                fetchReviews();
 
-          const pagePoints = document.getElementById("page-points");
-          if (pagePoints && data.points !== undefined) {
-            pagePoints.textContent = data.points;
-          }
+                const pagePoints = document.getElementById("page-points");
+                if (pagePoints && data.points !== undefined) {
+                    pagePoints.textContent = data.points;
+                }
 
-          const navPoints = document.getElementById("nav-points");
-          if (navPoints && data.points !== undefined) {
-            navPoints.textContent = `Poin: ${data.points}`;
-          }
-        })
-        .catch(console.error);
-      });
+                const navPoints = document.getElementById("nav-points");
+                if (navPoints && data.points !== undefined) {
+                    navPoints.textContent = `Poin: ${data.points}`;
+                }
+            })
+            .catch(console.error);
+        });
     }
-  </script>
-</body>
-</html>
+</script>
+{% endblock %}

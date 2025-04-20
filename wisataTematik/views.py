@@ -13,7 +13,7 @@ def tambah_rute_wisata(request):
             rute = form.save(commit=False)
             rute.dibuat_oleh = request.user
             rute.save()
-            request.user.points += 10
+            request.user.points += 100
             request.user.save()
             return redirect('place_list')
         else:

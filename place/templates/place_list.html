@@ -1,113 +1,196 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <title>Senang Berwisata - Daftar Tempat</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 text-gray-800">
-  {% include 'navbar.html' %}
-  <div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-6 text-center">Tempat Wisata Pilihan</h1>
+{% extends 'base.html' %}
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {% for place in places %}
-        <div class="bg-white rounded-xl shadow-md overflow-hidden relative">
-          <img class="h-48 w-full object-cover" src="{{ place.photo_main.url }}" alt="{{ place.name }}">
-          
-          {% if user.is_authenticated %}
-            <form data-place-id="{{ place.id }}" class="wishlist-form absolute top-2 right-2 z-10">
-              {% csrf_token %}
-              <button type="button" class="wishlist-btn text-2xl">
-                {% if place.id in wishlist_place_ids %}
-                  ❤️
-                {% else %}
-                  🤍
-                {% endif %}
-              </button>
-            </form>
-          {% endif %}
+{% block title %}Senang Berwisata - Daftar Tempat{% endblock %}
 
-          <div class="p-4">
-            <h2 class="text-xl font-semibold">
-              <a href="{% url 'place_detail' place.pk %}" class="text-blue-600 hover:underline">{{ place.name }}</a>
-            </h2>
-            <p class="text-sm text-gray-600">{{ place.address }}</p>
-            <a href="{{ place.google_maps_link }}" target="_blank" class="text-green-600 text-sm hover:underline">Lihat di Google Maps</a>
-          </div>
+{% block content %}
+<!-- Places to Go Section -->
+<section style="margin-bottom: 4rem;">
+    <h1 style="margin-bottom: 1rem;">Places to Go</h1>
+    <p class="body-1" style="margin-bottom: 1.5rem;">
+        Ready to go somewhere unforgettable? Start with these iconic and hidden gems across Yogyakarta
+    </p>
+    
+    <!-- Filter Buttons - Horizontal -->
+    <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 2rem;">
+        <button style="padding: 0.625rem 1.25rem; background-color: var(--primary-blue); color: var(--text-white); border-radius: 1.5rem; border: none; font-weight: 500; cursor: pointer;">
+            All
+        </button>
+        <button style="padding: 0.625rem 1.25rem; background-color: #f0f0f0; color: var(--text-main); border-radius: 1.5rem; border: none; font-weight: 500; cursor: pointer;">
+            Tourist Attractions
+        </button>
+        <button style="padding: 0.625rem 1.25rem; background-color: #f0f0f0; color: var(--text-main); border-radius: 1.5rem; border: none; font-weight: 500; cursor: pointer;">
+            Restaurant
+        </button>
+        <button style="padding: 0.625rem 1.25rem; background-color: #f0f0f0; color: var(--text-main); border-radius: 1.5rem; border: none; font-weight: 500; cursor: pointer;">
+            Cafe
+        </button>
+        <button style="padding: 0.625rem 1.25rem; background-color: #f0f0f0; color: var(--text-main); border-radius: 1.5rem; border: none; font-weight: 500; cursor: pointer;">
+            Beach
+        </button>
+    </div>
+
+    <!-- Places Cards - Horizontal Scrolling -->
+    <div style="width: 100%; position: relative;">
+        <div style="display: flex; overflow-x: auto; padding-bottom: 1.5rem; gap: 1.25rem;" class="no-scrollbar">
+            {% for place in places %}
+                <div style="min-width: 280px; max-width: 280px; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: relative; flex-shrink: 0;">
+                    <!-- Card Image -->
+                    <div style="width: 100%; height: 190px; overflow: hidden;">
+                        <img style="width: 100%; height: 100%; object-fit: cover;" src="{{ place.photo_main.url }}" alt="{{ place.name }}">
+                    </div>
+                    
+                    <!-- Card Content -->
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0) 100%); padding: 1rem; color: white;">
+                        <h2 class="subtitle-1" style="margin-bottom: 0.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ place.name }}</h2>
+                        
+                        <div style="display: flex; align-items: center; margin-bottom: 0.375rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.375rem; flex-shrink: 0;">
+                                <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span class="body-3" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ place.address }}</span>
+                        </div>
+                        
+                        <!-- Star Rating -->
+                        <div style="display: flex; align-items: center; margin-bottom: 0.875rem;">
+                            <div style="display: flex;">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= place.rating|floatformat:"0" %}
+                                        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="color: #FFD700;">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                        </svg>
+                                    {% else %}
+                                        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="color: #e0e0e0;">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                        </svg>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <span class="body-3" style="margin-left: 0.5rem;">{{ place.rating|floatformat:1 }} / 5.0</span>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div style="display: flex; justify-content: space-between;">
+                            <a href="{% url 'place_detail' place.pk %}" style="background-color: var(--secondary-blue-green); color: white; padding: 0.5rem 1rem; border-radius: 1.5rem; text-decoration: none; font-size: 0.875rem; font-weight: 500;">
+                                Explore Now
+                            </a>
+                            
+                            {% if user.is_authenticated %}
+                                <button type="button" class="wishlist-btn" style="background-color: rgba(255,255,255,0.2); width: 2rem; height: 2rem; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer;" data-place-id="{{ place.id }}">
+                                    {% if place.id in wishlist_place_ids %}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style="color: #ff4d4d;">
+                                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                                        </svg>
+                                    {% else %}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: white;">
+                                            <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                        </svg>
+                                    {% endif %}
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-      {% endfor %}
     </div>
 
     {% if not places %}
-      <p class="text-center mt-10 text-gray-500">Belum ada tempat wisata ditambahkan.</p>
+        <p style="text-align: center; margin-top: 2.5rem; color: var(--text-main);">Belum ada tempat wisata ditambahkan.</p>
     {% endif %}
+</section>
 
-    <div class="mt-16">
-      <h2 class="text-2xl font-bold mb-6 text-center">Rute Wisata Tematik</h2>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for rute in tematik_list %}
-          <div class="bg-white rounded-xl shadow-md overflow-hidden">
-            <img class="h-48 w-full object-cover" src="{{ rute.gambar.url }}" alt="{{ rute.judul }}">
-            <div class="p-4">
-              <h3 class="text-xl font-semibold">
-                <a href="{% url 'detail_rute' rute.pk %}" class="text-purple-600 hover:underline">{{ rute.judul }}</a>
-              </h3>
-              <p class="text-sm text-gray-600">{{ rute.deskripsi|truncatewords:20 }}</p>
-              <p class="text-xs text-gray-400 mt-2">Ditambahkan oleh {{ rute.dibuat_oleh.username }} | {{ rute.tanggal_dibuat|date:"d M Y" }}</p>
-            </div>
-          </div>
-        {% endfor %}
+<!-- Thematic Destinations Section -->
+<section style="margin-top: 5rem; margin-bottom: 3rem;">
+  <!-- Header -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <div>
+          <h1 style="margin-bottom: 0.5rem;">Thematic Destinations</h1>
+          <p class="body-1">
+              Tailored travel ideas, just the way you like them
+          </p>
       </div>
-
-      {% if not tematik_list %}
-        <p class="text-center mt-10 text-gray-500">Belum ada rute tematik ditambahkan.</p>
-      {% endif %}
-
-      {% if user.is_authenticated %}
-        <div class="mt-8 text-center">
-          <a href="{% url 'tambah_rute' %}" class="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg">
-            + Tambah Rute Wisata Tematik
-          </a>
-        </div>
-      {% endif %}
-    </div>
+      
+      <!-- Create your own page button -->
+      <a href="{% url 'tambah_rute' %}" style="display: inline-flex; align-items: center; background-color: var(--accent-blue); color: white; padding: 0.75rem 1.5rem; border-radius: 2rem; text-decoration: none; font-weight: 500;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Create your own page
+      </a>
   </div>
 
-  {% if user.is_authenticated %}
-  <script>
+  <!-- Thematic Routes - Horizontal Scrolling -->
+  <div style="width: 100%; position: relative;">
+      <div style="display: flex; overflow-x: auto; padding-bottom: 1.5rem; gap: 1.25rem;" class="no-scrollbar">
+          {% for rute in tematik_list %}
+              <div style="min-width: 280px; max-width: 280px; background-color: #f8f9fa; border-radius: 1rem; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; flex-shrink: 0;" onclick="window.location='{% url 'detail_rute' rute.pk %}'">
+                  <div style="position: relative; height: 180px; overflow: hidden;">
+                      <img style="width: 100%; height: 100%; object-fit: cover;" src="{{ rute.gambar.url }}" alt="{{ rute.judul }}">
+                  </div>
+                  <div style="padding: 1.25rem;">
+                      <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">
+                          <a href="{% url 'detail_rute' rute.pk %}" style="color: var(--text-main); text-decoration: none;">
+                              {{ rute.judul }}
+                          </a>
+                      </h3>
+                      <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; height: 3.6em;">
+                          {{ rute.deskripsi|truncatechars:150 }}
+                      </p>
+                      <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.75rem; font-style: italic;">
+                          By {{ rute.dibuat_oleh.username }} - {{ rute.tanggal_dibuat|date:"F d, Y" }}
+                      </p>
+                  </div>
+              </div>
+          {% empty %}
+              <p style="text-align: center; margin-top: 2.5rem; color: var(--text-main); width: 100%;">Belum ada rute tematik ditambahkan.</p>
+          {% endfor %}
+      </div>
+  </div>
+
+  <!-- Find more ideas button -->
+  <div style="text-align: center; margin-top: 2.5rem;">
+      <a href="#" style="display: inline-block; padding: 0.75rem 2.5rem; border: 1px solid var(--accent-blue); color: var(--accent-blue); background-color: transparent; border-radius: 2rem; text-decoration: none; font-weight: 500; transition: all 0.2s ease;">
+          Find more ideas
+      </a>
+  </div>
+</section>
+
+{% if user.is_authenticated %}
+<script>
     document.addEventListener('DOMContentLoaded', function () {
-      const forms = document.querySelectorAll('.wishlist-form');
+        const wishlistBtns = document.querySelectorAll('.wishlist-btn');
 
-      forms.forEach(form => {
-        const button = form.querySelector('.wishlist-btn');
-        const placeId = form.getAttribute('data-place-id');
-        const csrfToken = form.querySelector('input[name="csrfmiddlewaretoken"]').value;
-
-        button.addEventListener('click', function () {
-          fetch(`/wishlist/toggle/${placeId}/`, {
-            method: 'POST',
-            headers: {
-              'X-CSRFToken': csrfToken,
-              'X-Requested-With': 'XMLHttpRequest',
-            },
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.status === 'added') {
-              button.textContent = '❤️';
-            } else if (data.status === 'removed') {
-              button.textContent = '🤍';
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-          });
+        wishlistBtns.forEach(button => {
+            const placeId = button.getAttribute('data-place-id');
+            
+            button.addEventListener('click', function () {
+                fetch(`/wishlist/toggle/${placeId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'added') {
+                        button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style="color: #ff4d4d;">
+                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                        </svg>`;
+                    } else if (data.status === 'removed') {
+                        button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: white;">
+                            <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
         });
-      });
     });
-  </script>
-  {% endif %}
-</body>
-</html>
+</script>
+{% endif %}
+{% endblock %}
