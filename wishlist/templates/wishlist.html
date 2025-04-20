@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Wishlist Kamu</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  {% include 'navbar.html' %}
+
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6 text-center">Wishlist Kamu</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for item in wishlist_places %}
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <img class="h-48 w-full object-cover" src="{{ item.place.photo_main.url }}" alt="{{ item.place.name }}">
+          <div class="p-4">
+            <h2 class="text-xl font-semibold">
+              <a href="{% url 'place_detail' item.place.pk %}" class="text-blue-600 hover:underline">
+                {{ item.place.name }}
+              </a>
+            </h2>
+            <p class="text-sm text-gray-600">{{ item.place.address }}</p>
+            <a href="{{ item.place.google_maps_link }}" target="_blank" class="text-green-600 text-sm hover:underline">
+              Lihat di Google Maps
+            </a>
+            <form method="POST" action="{% url 'toggle_wishlist' item.place.pk %}" class="mt-2">
+              {% csrf_token %}
+              <button type="submit" class="text-red-500 hover:text-red-700">Hapus dari Wishlist ❤️</button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if not wishlist_places %}
+      <p class="text-center mt-10 text-gray-500">Kamu belum memiliki wishlist.</p>
+    {% endif %}
+  </div>
+</body>
+</html>
