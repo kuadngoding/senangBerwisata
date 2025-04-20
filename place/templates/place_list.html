@@ -12,8 +12,22 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {% for place in places %}
-        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="bg-white rounded-xl shadow-md overflow-hidden relative">
           <img class="h-48 w-full object-cover" src="{{ place.photo_main.url }}" alt="{{ place.name }}">
+          
+          {% if user.is_authenticated %}
+            <form data-place-id="{{ place.id }}" class="wishlist-form absolute top-2 right-2 z-10">
+              {% csrf_token %}
+              <button type="button" class="wishlist-btn text-2xl">
+                {% if place.id in wishlist_place_ids %}
+                  ❤️
+                {% else %}
+                  🤍
+                {% endif %}
+              </button>
+            </form>
+          {% endif %}
+
           <div class="p-4">
             <h2 class="text-xl font-semibold">
               <a href="{% url 'place_detail' place.pk %}" class="text-blue-600 hover:underline">{{ place.name }}</a>
@@ -60,5 +74,40 @@
       {% endif %}
     </div>
   </div>
+
+  {% if user.is_authenticated %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const forms = document.querySelectorAll('.wishlist-form');
+
+      forms.forEach(form => {
+        const button = form.querySelector('.wishlist-btn');
+        const placeId = form.getAttribute('data-place-id');
+        const csrfToken = form.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+        button.addEventListener('click', function () {
+          fetch(`/wishlist/toggle/${placeId}/`, {
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': csrfToken,
+              'X-Requested-With': 'XMLHttpRequest',
+            },
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.status === 'added') {
+              button.textContent = '❤️';
+            } else if (data.status === 'removed') {
+              button.textContent = '🤍';
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+        });
+      });
+    });
+  </script>
+  {% endif %}
 </body>
 </html>

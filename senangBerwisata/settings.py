@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'review.apps.ReviewConfig',
     'coupon.apps.CouponConfig',
     'wisataTematik',
+    'wishlist',
 ]
 
 MIDDLEWARE = [
