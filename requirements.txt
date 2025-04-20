@@ -6,3 +6,4 @@ gunicorn
 pytest-django
 Pillow==10.3.0
 whitenoise
+dj-database-url
