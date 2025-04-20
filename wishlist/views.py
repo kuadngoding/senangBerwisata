@@ -21,3 +21,9 @@ def toggle_wishlist(request, place_id):
 def wishlist_view(request):
     wishlist_places = Wishlist.objects.filter(user=request.user)
     return render(request, 'wishlist.html', {'wishlist_places': wishlist_places})
+
+@login_required
+def delete_wishlist(request, place_id):
+    place = get_object_or_404(Place, id=place_id)
+    Wishlist.objects.filter(user=request.user, place=place).delete()
+    return redirect('wishlist') 
